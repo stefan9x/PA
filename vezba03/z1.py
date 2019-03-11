@@ -6,13 +6,6 @@ def rand_list(min, max, num_of_el):
     list = random.sample(range(min, max), num_of_el)
     return list
 
-def merge_sort(A, pocetak, kraj):
-    if pocetak < kraj:
-        pilot = (pocetak + kraj) // 2
-        merge_sort(A, pocetak, pilot)
-        merge_sort(A, pilot + 1, kraj)
-        merge(A, pocetak, pilot, kraj)
-
 def merge(A, pocetak, pilot, kraj):
     L_len = pilot - pocetak + 1
     R_len = kraj - pilot
@@ -37,14 +30,42 @@ def merge(A, pocetak, pilot, kraj):
             A[k] = R[j]
             j += 1
 
+def merge_sort(A, pocetak, kraj):
+    if pocetak < kraj:
+        pilot = (pocetak + kraj) // 2
+        merge_sort(A, pocetak, pilot)
+        merge_sort(A, pilot + 1, kraj)
+        merge(A, pocetak, pilot, kraj)
+		
 if __name__ == "__main__":
-    A = rand_list(0, 50, 25)
+    print("----Test-----")
+    A = rand_list(0, 20, 10)
     print("Niz:", A)
+    merge_sort(A, 0, len(A) - 1)
+    print("Slozen:", A)
+    print("-------------")
 
+    A = rand_list(0, 2000, 1000)
     start_time = time.time()
     merge_sort(A, 0, len(A) - 1)
     end_time = time.time() - start_time
+    print("Vrijeme za",len(A),":", end_time)
 
-    print("Slozen niz:", A)
-    print("Vrijeme:",end_time)
+    A = rand_list(0, 10000, 5000)
+    start_time = time.time()
+    merge_sort(A, 0, len(A) - 1)
+    end_time = time.time() - start_time
+    print("Vrijeme za",len(A),":", end_time)
+
+    A = rand_list(0, 100000, 50000)
+    start_time = time.time()
+    merge_sort(A, 0, len(A) - 1)
+    end_time = time.time() - start_time
+    print("Vrijeme za",len(A),":", end_time)
+
+    A = rand_list(0, 600000, 500000)
+    start_time = time.time()
+    merge_sort(A, 0, len(A) - 1)
+    end_time = time.time() - start_time
+    print("Vrijeme za",len(A),":", end_time)
     

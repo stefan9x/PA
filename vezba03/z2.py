@@ -27,12 +27,35 @@ def randomized_quicksort(A, pocetak, kraj):
         randomized_quicksort(A, q + 1, kraj)
 
 if __name__ == "__main__":
-    A = rand_list(0, 50, 25)
-    print("Niz:", A)
 
+    A = rand_list(0, 20, 10)
+    
+    print("----Test-----")
+    print("Niz:", A)
+    randomized_quicksort(A, 0, len(A) - 1)
+    print("Slozen niz:", A)
+    print("-------------")
+    
+    A = rand_list(0, 2000, 1000)
     start_time = time.time()
     randomized_quicksort(A, 0, len(A) - 1)
     end_time = time.time() - start_time
+    print("Vrijeme za",len(A),":", end_time)
 
-    print("Slozen niz:", A)
-    print("Vrijeme:",end_time)
+    A = rand_list(0, 10000, 5000)
+    start_time = time.time()
+    randomized_quicksort(A, 0, len(A) - 1)
+    end_time = time.time() - start_time
+    print("Vrijeme za",len(A),":", end_time)
+
+    A = rand_list(0, 100000, 50000)
+    start_time = time.time()
+    randomized_quicksort(A, 0, len(A) - 1)
+    end_time = time.time() - start_time
+    print("Vrijeme za",len(A),":", end_time)
+
+    A = rand_list(0, 600000, 500000)
+    start_time = time.time()
+    randomized_quicksort(A, 0, len(A) - 1)
+    end_time = time.time() - start_time
+    print("Vrijeme za",len(A),":", end_time)
