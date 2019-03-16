@@ -6,7 +6,7 @@ def rand_list(min, max, num_of_el):
     list = random.sample(range(min, max), num_of_el)
     return list
 
-def merge(A, pocetak, pilot, kraj):
+def merge(A, pocetak, pilot, kraj, obrnuto=0):
     L_len = pilot - pocetak + 1
     R_len = kraj - pilot
     L, R = [], []
@@ -16,32 +16,47 @@ def merge(A, pocetak, pilot, kraj):
     for j in range(0, R_len):
         R.append(A[pilot + j + 1])
 
-    L.append(math.inf)
-    R.append(math.inf)
-
     i = 0
     j = 0
 
-    for k in range(pocetak, kraj + 1):
-        if L[i] <= R[j]:
-            A[k] = L[i]
-            i += 1
-        else:
-            A[k] = R[j]
-            j += 1
+    if obrnuto == 0:
+        L.append(math.inf)
+        R.append(math.inf)
 
-def merge_sort(A, pocetak, kraj):
+        for k in range(pocetak, kraj + 1):
+            if L[i] <= R[j]:
+                A[k] = L[i]
+                i += 1
+            else:
+                A[k] = R[j]
+                j += 1
+    else:
+        L.append(-math.inf)
+        R.append(-math.inf)
+
+        for k in range(pocetak, kraj + 1):
+            if L[i] >= R[j]:
+                A[k] = L[i]
+                i += 1
+            else:
+                A[k] = R[j]
+                j += 1
+
+
+# obrnuto == 0 - za rastuci(default ako nije unijeto nista)
+# obrnuto != 0 - za opadajuci
+def merge_sort(A, pocetak, kraj, obrnuto=0):
     if pocetak < kraj:
         pilot = (pocetak + kraj) // 2
-        merge_sort(A, pocetak, pilot)
-        merge_sort(A, pilot + 1, kraj)
-        merge(A, pocetak, pilot, kraj)
+        merge_sort(A, pocetak, pilot, obrnuto)
+        merge_sort(A, pilot + 1, kraj, obrnuto)
+        merge(A, pocetak, pilot, kraj, obrnuto)
 		
 if __name__ == "__main__":
     print("----Test-----")
     A = rand_list(0, 20, 10)
     print("Niz:", A)
-    merge_sort(A, 0, len(A) - 1)
+    merge_sort(A, 0, len(A) - 1, 1)
     print("Slozen:", A)
     print("-------------")
 
