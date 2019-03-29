@@ -19,12 +19,12 @@ def IterativeTreeSearch(x, k):
 def TreeMinimum(x):
     while x.left != None:
         x = x.left
-    return x.data.a1
+    return x
 
 def TreeMaximum(x):
     while x.right != None:
         x = x.right
-    return x.data.a1
+    return x
 
 def TreeSuccessor(x):
     if x.right != None:
@@ -33,7 +33,7 @@ def TreeSuccessor(x):
     while y != None and x == y.right:
         x = y       
         y = y.parent
-    return y.data.a1
+    return y
 
 def InOrderTreeWalk(x):
     if x != None:

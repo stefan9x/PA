@@ -30,7 +30,7 @@ if __name__ == "__main__":
     print("IterativeTreeSearch for 5: ", IterativeTreeSearch(N[0], 5))
     print("TreeMinimum: ", TreeMinimum(N[0]))
     print("TreeMaximum: ", TreeMaximum(N[0]))
-    print("N[%d]=%d TreeSuccessor: %d" %(3, N[3].data.a1, TreeSuccessor(N[3])))
+    print("N[%d]=%d TreeSuccessor:" %(3, N[3].data.a1), TreeSuccessor(N[3]))
     print("Deleting node N[%d] with data %d." %(3, N[3].data.a1))
     TreeDelete(N[0], N[3])
     InOrderTreeWalk(N[0])
