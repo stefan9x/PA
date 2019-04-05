@@ -9,7 +9,7 @@ def ind(i):
     return i//10
 
 def BucketSort(A):
-    size = 10
+    size = max(A) // 10 + 1
     B = [0] * size
     
     for i in range(size):
@@ -23,7 +23,7 @@ def BucketSort(A):
     
     A.clear()
 
-    for i in range(size - 1):
+    for i in range(size):
         A += B[i]
 
 if __name__ == "__main__":
