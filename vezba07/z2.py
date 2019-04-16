@@ -7,6 +7,9 @@ class Data:
         self.key = key
         self.literal = str(key)
 
+    def __str__(self):
+        return str(self.key)
+
 def randList(min, max, num):
     l = []
     for i in range(num):
@@ -36,7 +39,7 @@ def hashInsert(T, k, m):
 
     while(i != m):
         j = linProb(k, m, i)
-        if T[j] == None:
+        if T[j] == None or T[j] == "deleted":
             T[j] = k
             return j
         else:
@@ -58,17 +61,13 @@ def hashSearch(T, k, m):
         if T[j] == None or i == m:
             return None
 
-""" def hashDelete(T, k, m):
-    i = 0
+# Dodatni zadatak
+def hashDelete(T, k, m):
     
-    while True:
-        j = linProb(k, m, i)
-            
-        if T[j].key == k.key:
-            T[j] = "Deleted"
-            break
-        else:
-            i += 1 """
+    j = hashSearch(T, k, m)
+
+    T[j] = "deleted"
+
 
 if __name__ == "__main__":
     
@@ -103,12 +102,21 @@ if __name__ == "__main__":
 
             endTime = time.perf_counter() - startTime
 
-            #del_res = hashDelete(T, src, m)
-
             if src_res != None:
                 print("Found! Took:", endTime)
             else:
                 print("Not Found! Took:", endTime)
+            
+            #delete testing
+            '''for t in T:
+                print(t)
+            
+            hashDelete(T, src, m)
+
+            for t in T:
+                print(t)'''
+
+
 
             
     
