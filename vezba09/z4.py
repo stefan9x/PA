@@ -18,12 +18,12 @@ if __name__ == "__main__":
     watch.connection = []
     pants.connection = [belt, shoes]
     shoes.connection = []  
-    shirt.connection = [belt, tie]
+    shirt.connection = [tie, belt]
     belt.connection = [jacket]
     tie.connection = [jacket]
     jacket.connection = []
 
-    G = [jacket, tie, belt, shirt, watch, shoes, pants, undershorts, socks]
+    G = [shirt, tie, jacket, belt, watch, undershorts, pants, shoes, socks]
     L = topological_sort(G)
     for l in reversed(L):
         print(l.name + "(" + str(l.data) + "/" + str(l.time) + ")")

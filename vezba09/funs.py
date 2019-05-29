@@ -30,8 +30,7 @@ def bfs_script(G, source, destination):
     print_path(G, source, destination)
 
 def dfs_script(G, source, destination):
-    L = []
-    dfs(G, L)
+    dfs(G)
     print("Path from " + source.name + " to " + destination.name + ": ", end = "")
     print_path(G, source, destination)
 
@@ -59,7 +58,7 @@ def bfs(G, s):
 
         u.color = VertexColor.BLACK
 
-def dfs_visit(G, u):
+def dfs_visit(G, u, L):
     global time
     time = time + 1
     u.data = time
@@ -68,13 +67,15 @@ def dfs_visit(G, u):
     for conn in u.connection:
         if conn.color == VertexColor.WHITE:
             conn.parent = u
-            dfs_visit(G, conn)
+            dfs_visit(G, conn, L)
 
     u.color = VertexColor.BLACK
     time = time + 1
     u.time = time
+    L.append(u)
             
-def dfs(G, L):
+def dfs(G):
+    L = []
     global time
     for v in G:
         v.color = VertexColor.WHITE
@@ -84,12 +85,12 @@ def dfs(G, L):
 
     for v2 in G:
         if v2.color == VertexColor.WHITE:
-            dfs_visit(G, v2)
-        L.append(v2)
+            dfs_visit(G, v2, L)
+
+    return L
 
 def topological_sort(G):
-    L = []
-    dfs(G, L)
+    L = dfs(G)
     return L
 
     
