@@ -1,102 +1,90 @@
 import math
 import random
+import string
 from graph_vertex import *
 
-def get_weight(E, s, d):
-    for e in E:
-        if e.source == s and e.destination == d:
-            return e.weight
-
-def extract_min(V):
-    m = V[0]
-    
-    for v in V:
-        if v.data < m.data:
-            m = v
-
-    V.remove(m)
-    return m
-
-def get_n(E, u):
-    N = []
-    
-    for e in E:
-        if e.source == u:
-            N.append(e.destination)
-
-    return N
-
-def print_path(s, d):
-    if d == s:
+def print_path(G, s, d):
+    if G.nodes[d] == G.nodes[s]:
         print(s, end = " ")
-    elif d.parent == None:
-        print("No path from " + str(s.name) + " to " + str(d.name) + " exist.", end = " ")
+    elif G.parent[d] == None:
+        print("No path from " + s + " to " + d + " exist.", end = " ")
     else:
-        print_path(s, d.parent)
+        print_path(G, s, G.parent[d])
         print(d, end = " ")
 
 def print_all_paths(G, s):
-    for v in G[0]:
-        print("Shortest path from " + s.name + " to " + v.name + ":", end = " ")
-        print_path(s, v)
+    for n in G.nodes:
+        print("Shortest path from " + s + " to " + n + ":", end = " ")
+        print_path(G, s, n)
         print()
 
 def print_graph(G):
     print()
-    for v in G[0]:
-        for e in G[1]:
-            if v == e.source:
-                print(e.source, end = " -> ")
-                print(e.destination, end = " : ")
-                print(e.weight)
-        print()
+    for n in G.nodes:
+        for e in G.edges[n]:
+            print(n, end = " -> ")
+            print(e, end = " : ")
+            print(G.weight[n, e])
     
-def init_single_src(V, s):
-    for v in V:
-        v.data = math.inf
-        v.parent = None
-
-    s.data = 0
-
-def relax(E, u, v):
-    w = get_weight(E, u, v)
-    if v.data > u.data + w:
-        v.data = u.data + w
-        v.parent = u
-
 def dijkstra(G, s):
-    init_single_src(G[0], s)
+    init_single_src(G, s)
     S = []
-    Q = G[0][:]
+    Q = G.nodes.copy()
     
     while Q:
         u = extract_min(Q)
         S.append(u)
         
-        for v in get_n(G[1], u):
-            relax(G[1], u, v)
+        for n in G.edges[u]:
+            relax(G, u, n)
+
+def init_single_src(G, s):
+    for g in G.nodes:
+        G.nodes[g] = math.inf
+        G.parent[g] = None
+
+    G.nodes[s] = 0
+
+def relax(G, u, v):
+    w = G.weight[(u, v)]
+    if G.nodes[v] > G.nodes[u] + w:
+        G.nodes[v] = G.nodes[u] + w
+        G.parent[v] = u
+
+def extract_min(N):
+    m = list(N.keys())[0]
+
+    for v in N:
+        if N[v] < N[m]:
+            m = v
+
+    N.pop(m)
+    return m
 
 def create_graph(v_num, e_num, max_w):
-    V = []
-    for v in range(v_num):
-        V.append(Vertex(str(v), v))
+    G = Graph()
 
-    E = []
+    for v in range(v_num):
+        if v_num < len(string.ascii_lowercase):
+            G.add_node(string.ascii_lowercase[v], math.inf)
+        else:
+            G.add_node(str(v), math.inf)
+
     for e in range(e_num):
-        s = random.randint(0, v_num - 1)
-        d = random.randint(0, v_num - 1)
+        s = random.choice(list(G.nodes))
+        d = random.choice(list(G.nodes))
         w = random.randint(0, max_w)
         
-        test = Edge(V[s], V[d], w)
+        cnt = 0
         
-        found = False
-        for e_t in E:
-            if test.source == e_t.source and test.destination == e_t.destination:
-                found = True
+        while(True):
+            if cnt == v_num:
+                break
 
-        if found == False:
-            E.append(test)
-
-    G = [V, E]
-    
+            if d not in G.edges[s]:
+                G.add_edge(s, d, w)
+                break
+            else:
+                d = random.choice(list(G.nodes))
+                cnt += 1
     return G

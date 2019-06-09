@@ -1,54 +1,46 @@
 from graph_vertex import *
 from functions import *
 import math
+import time
 
 if __name__ == "__main__":
     
-    s = Vertex("s", 0)
-    t = Vertex("t", math.inf)
-    x = Vertex("x", math.inf)
-    y = Vertex("y", math.inf)
-    z = Vertex("z", math.inf)
+    G = Graph()
 
-    V = []
-    V = [s, t, x, y, z]
-    
-    E = []
-    
-    E.append(Edge(s, t, 10))
-    E.append(Edge(s, y, 5))
-    
-    E.append(Edge(t, x, 1))
-    E.append(Edge(t, y, 2))
+    G.add_node("s", math.inf)
+    G.add_node("t", math.inf)
+    G.add_node("x", math.inf)
+    G.add_node("y", math.inf)
+    G.add_node("z", math.inf)
 
-    E.append(Edge(x, z, 4))
-    
-    E.append(Edge(y, t, 3))
-    E.append(Edge(y, x, 9))
-    E.append(Edge(y, z, 2))
+    G.add_edge("s", "t", 10)
+    G.add_edge("s", "y", 5)
 
-    E.append(Edge(z, x, 6))
-    E.append(Edge(z, s, 7))
+    G.add_edge("t", "x", 1)
+    G.add_edge("t", "y", 2)
 
-    G = []
+    G.add_edge("x", "z", 4)
 
-    G = [V, E]
-    
-    dijkstra(G, s)
+    G.add_edge("y", "t", 3)
+    G.add_edge("y", "x", 9)
+    G.add_edge("y", "z", 2)
+
+    G.add_edge("z", "x", 6)
+    G.add_edge("z", "s", 7)
+
+    dijkstra(G, "s")
     
     print("Graph 1")
-    print_all_paths(G, s)
-
+    print_all_paths(G, "s")
+    print_graph(G)
+    
     print()
     print("Random graph")
     G1 = create_graph(5, 15, 20)
 
-    s_p = G1[0][random.randint(0, 4)]
-
+    s_p = random.choice(list(G1.nodes))
     dijkstra(G1, s_p)
-    
-    print_all_paths(G1, s_p)
 
     print_graph(G1)
-    
+    print_all_paths(G1, s_p)
     

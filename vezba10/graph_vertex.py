@@ -1,17 +1,18 @@
-class Vertex:
-    def __init__(self, n = None, d = None, p = None):
-        self.name = n        
-        self.data = d
-        self.parent = p
+from collections import defaultdict
 
-    def __str__(self):
-        return self.name + "(" + str(self.data) + ")"
+class Graph:
+    def __init__(self):
+        self.nodes = {}
+        self.parent = {}
+        self.edges = defaultdict(list)
+        self.weight = {}
 
-class Edge:
-    def __init__(self, s = None, d = None, w = None):
-        self.source = s
-        self.destination = d
-        self.weight = w
-        
+    def add_node(self, name, data):
+        self.nodes[name] = data
 
+    def add_edge(self, src, dst, w):
+        self.edges[src].append(dst)
+        self.weight[(src, dst)] = w
 
+    def add_parent(self, node, parent):
+        self.parent[node] = parent
