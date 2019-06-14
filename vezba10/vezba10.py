@@ -1,4 +1,4 @@
-from graph_vertex import *
+from graph_cls import *
 from functions import *
 import math
 import time

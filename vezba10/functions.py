@@ -1,90 +1,90 @@
 import math
 import random
 import string
-from graph_vertex import *
+from graph_cls import *
 
-def print_path(G, s, d):
-    if G.nodes[d] == G.nodes[s]:
-        print(s, end = " ")
-    elif G.parent[d] == None:
-        print("No path from " + s + " to " + d + " exist.", end = " ")
+def print_path(G, src, dst):
+    if dst == src:
+        print(src, end = " ")
+    elif G.parent[dst] == None:
+        print("No path from " + src + " to " + dst + " exist.", end = " ")
     else:
-        print_path(G, s, G.parent[d])
-        print(d, end = " ")
+        print_path(G, src, G.parent[dst])
+        print(dst, end = " ")
 
-def print_all_paths(G, s):
-    for n in G.nodes:
-        print("Shortest path from " + s + " to " + n + ":", end = " ")
-        print_path(G, s, n)
+def print_all_paths(G, src):
+    for node in G.nodes:
+        print("Shortest path from " + src + " to " + node + ":", end = " ")
+        print_path(G, src, node)
         print()
 
 def print_graph(G):
     print()
-    for n in G.nodes:
-        for e in G.edges[n]:
-            print(n, end = " -> ")
-            print(e, end = " : ")
-            print(G.weight[n, e])
+    for node in G.nodes:
+        for dst in G.connections[node]:
+            print(node, end = " -> ")
+            print(dst, end = " : ")
+            print(G.weight[node, dst])
     
-def dijkstra(G, s):
-    init_single_src(G, s)
+def dijkstra(G, src):
+    init_single_src(G, src)
     S = []
     Q = G.nodes.copy()
     
     while Q:
-        u = extract_min(Q)
-        S.append(u)
+        m = extract_min(Q)
+        S.append(m)
         
-        for n in G.edges[u]:
-            relax(G, u, n)
+        for dst in G.connections[m]:
+            relax(G, m, dst)
 
-def init_single_src(G, s):
-    for g in G.nodes:
-        G.nodes[g] = math.inf
-        G.parent[g] = None
+def init_single_src(G, src):
+    for node in G.nodes:
+        G.nodes[node] = math.inf
+        G.add_parent(node, None)
 
-    G.nodes[s] = 0
+    G.nodes[src] = 0
 
-def relax(G, u, v):
-    w = G.weight[(u, v)]
-    if G.nodes[v] > G.nodes[u] + w:
-        G.nodes[v] = G.nodes[u] + w
-        G.parent[v] = u
+def relax(G, src, dst):
+    w = G.weight[(src, dst)]
+    if G.nodes[dst] > G.nodes[src] + w:
+        G.nodes[dst] = G.nodes[src] + w
+        G.parent[dst] = src
 
 def extract_min(N):
     m = list(N.keys())[0]
 
-    for v in N:
-        if N[v] < N[m]:
-            m = v
+    for node in N:
+        if N[node] < N[m]:
+            m = node
 
     N.pop(m)
     return m
 
-def create_graph(v_num, e_num, max_w):
+def create_graph(n_num, e_num, max_w):
     G = Graph()
 
-    for v in range(v_num):
-        if v_num < len(string.ascii_lowercase):
-            G.add_node(string.ascii_lowercase[v], math.inf)
+    for n in range(n_num):
+        if n_num < len(string.ascii_lowercase):
+            G.add_node(string.ascii_lowercase[n], math.inf)
         else:
-            G.add_node(str(v), math.inf)
+            G.add_node(str(n), math.inf)
 
     for e in range(e_num):
-        s = random.choice(list(G.nodes))
-        d = random.choice(list(G.nodes))
+        src = random.choice(list(G.nodes))
+        dst = random.choice(list(G.nodes))
         w = random.randint(0, max_w)
         
         cnt = 0
         
         while(True):
-            if cnt == v_num:
+            if cnt == n_num:
                 break
 
-            if d not in G.edges[s]:
-                G.add_edge(s, d, w)
+            if dst not in G.connections[src]:
+                G.add_edge(src, dst, w)
                 break
             else:
-                d = random.choice(list(G.nodes))
+                dst = random.choice(list(G.nodes))
                 cnt += 1
     return G
