@@ -3,137 +3,115 @@ from math import inf
 
 def MakeGraph():
     
-    E = []
+    G = Graph()
 
-    a = Node("192.168.242.10")
-    b = Node("192.168.242.100")
-    c = Node("192.168.242.95")
-    d = Node("192.168.10.10")
-    e = Node("192.168.242.35")
-    f = Node("192.168.242.48")
-    g = Node("192.168.242.102")
-    h = Node("192.168.10.11")
-    i = Node("192.168.242.73")
-    j = Node("192.168.242.84")
+    G.addNode("192.168.242.10", inf)
+    G.addNode("192.168.242.100", inf)
+    G.addNode("192.168.242.95", inf)
+    G.addNode("192.168.10.10", inf)
+    G.addNode("192.168.242.35", inf)
+    G.addNode("192.168.242.48", inf)
+    G.addNode("192.168.242.102", inf)
+    G.addNode("192.168.10.11", inf)
+    G.addNode("192.168.242.73", inf)
+    G.addNode("192.168.242.84", inf)
 
-    N=[a, b, c, d, e, f, g, h, i, j]
+    G.addEdge("192.168.242.10", "192.168.242.100", 5)
+    G.addEdge("192.168.242.10", "192.168.242.73", 3)
 
-    E.append(Edge(a, b, 5))
-    E.append(Edge(a, i, 3))
+    G.addEdge("192.168.242.100", "192.168.242.95", 4)
+    G.addEdge("192.168.242.100", "192.168.242.102", 3)
 
-    E.append(Edge(b, c, 4))
-    E.append(Edge(b, g, 3))
+    G.addEdge("192.168.242.95", "192.168.242.84", 3)
 
-    E.append(Edge(c, j, 3))
+    G.addEdge("192.168.10.10", "192.168.10.11", 1)
 
-    E.append(Edge(d, h, 1))
+    G.addEdge("192.168.242.35", "192.168.242.102", 3)
+    G.addEdge("192.168.242.35", "192.168.242.48", 1)
 
-    E.append(Edge(e, g, 3))
-    E.append(Edge(e, f, 1))
+    G.addEdge("192.168.242.48", "192.168.242.84", 4)
+    G.addEdge("192.168.242.48", "192.168.242.73", 1)
 
-    E.append(Edge(f, j, 4))
-    E.append(Edge(f, i, 1))
+    G.addEdge("192.168.242.102", "192.168.242.84", 1)
+    G.addEdge("192.168.242.102", "192.168.242.10", 1)
 
-    E.append(Edge(g, j, 1))
-    E.append(Edge(g, a, 1))
+    G.addEdge("192.168.10.11", "192.168.10.10", 1)
 
-    E.append(Edge(h, d, 1))
+    G.addEdge("192.168.242.73", "192.168.242.35", 4)
 
-    E.append(Edge(i, e, 4))
+    G.addEdge("192.168.242.84", "192.168.242.100", 1)
 
-    E.append(Edge(j, b, 1))
-
-    return Graph(N, E)
+    return G
 
 def PrintGraph(G):
-    for n in G.nodes:
-        for e in G.edges:
-            if n == e.source:
-                print(n.ip + "(" + str(n.data) + ")" + " -> " + e.destination.ip + "(" + str(n.data) + ")" + " : " + str(e.weight))
+    for node in G.nodes:
+        for dst in G.connections[node]:
+            print(node + "(" + str(G.nodes[node]) + ") -> " + dst + "(" + str(G.nodes[dst]) + ") : " + str(G.weights[(node, dst)]))
 
-def GetShortestPath(G, path, s, d):
-    if d == s:
-        path.append(s)
-    elif d.parent == None:
+def GetShortestPath(G, path, src, dst):
+    if dst == src:
+        path.append(src)
+    elif G.parent[dst] == None:
         return None
     else:
-        GetShortestPath(G, path, s, d.parent)
-        path.append(d)
-
-def GetWeight(G, s, d):
-    for e in G.edges:
-        if e.source == s and e.destination == d:
-            return e.weight
+        GetShortestPath(G, path, src, G.parent[dst])
+        path.append(dst)
 
 def ExtractMin(Q):
-    m = Q[0]
+    m = list(Q.keys())[0]
 
-    for n in Q:
-        if n.data < m.data:
-            m = n
+    for node in Q:
+        if Q[node] < Q[m]:
+            m = node
 
-    Q.remove(m)
+    del Q[m]
     return m
 
-def GetN(G, n):
-    L = []
+def InitializeSingleSource(G, src):
+    for node in G.nodes:
+        G.nodes[node] = inf
+        G.addParent(node, None)
 
-    for e in G.edges:
-        if e.source == n:
-            L.append(e.destination)
+    G.nodes[src] = 0
 
-    return L
+def Relax(G, src, dst):
+    weight = G.weights[(src, dst)]
 
-def InitializeSingleSource(G, s):
-    for n in G.nodes:
-        n.data = inf
-        n.parent = None
-    s.data = 0
+    if G.nodes[dst] > G.nodes[src] + weight:
+        G.nodes[dst] = G.nodes[src] + weight
+        G.addParent(dst, src)
 
-def Relax(G, u, v):
-    weight = GetWeight(G, u, v)
-
-    if v.data > u.data + weight:
-        v.data = u.data + weight
-        v.parent = u
-
-def Dijkstra(G, s):
-    InitializeSingleSource(G, s)
+def Dijkstra(G, src):
+    InitializeSingleSource(G, src)
     
-    Q = G.nodes[:]
+    Q = G.nodes.copy()
 
     while Q:
-        u = ExtractMin(Q)
-        for n in GetN(G, u):
-            Relax(G, u, n)
+        m = ExtractMin(Q)
+        for dst in G.connections[m]:
+            Relax(G, m, dst)
 
-def ShortestPath(G, s, d):
+def ShortestPath(G, src, dst):
     p = []
     path = ""
 
-    Dijkstra(G, s)
-    GetShortestPath(G, p, s, d)
+    Dijkstra(G, src)
+    GetShortestPath(G, p, src, dst)
 
     for i in range (len(p)):
         if i == len(p)-1:
-            path += p[i].ip
+            path += p[i]
         else:
-            path += p[i].ip + "->"
+            path += p[i] + "->"
 
     if path != "":
-        return [path, p[-1].data]
+        return [path, G.nodes[p[-1]]]
     else:
         return ["No route found", inf]
 
-    
+def UpdateEdge(G, src, dst, w):
 
-def UpdateEdge(G, s, d, w):
-
-    found = False
-    for e in G.edges:
-        if e.source == s and e.destination == d:
-            found = True
-            e.weight = w
-
-    if not found:
-        G.edges.append(Edge(s, d, w))
+    if dst not in G.connections[src]:
+        G.addEdge(src, dst, w)
+    else:
+        G.weights[(src, dst)] = w

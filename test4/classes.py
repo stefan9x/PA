@@ -1,16 +1,18 @@
-class Node:
-    def __init__(self, ip):
-        self.ip = ip
-        self.data = None
-        self.parent = None
-
-class Edge:
-    def __init__(self, s, d, w):
-        self.source = s
-        self.destination = d
-        self.weight = w
+from collections import defaultdict   
 
 class Graph:
-    def __init__(self, N, E):
-        self.nodes = N
-        self.edges = E        
+    def __init__(self):
+        self.nodes = {}
+        self.connections = defaultdict(list)
+        self.parent = {}
+        self.weights = {}
+        
+    def addNode(self, name, data):
+        self.nodes[name] = data
+
+    def addEdge(self, src, dst, w):
+        self.connections[src].append(dst)
+        self.weights[(src, dst)] = w
+
+    def addParent(self, node, parent):
+        self.parent[node] = parent

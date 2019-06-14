@@ -1,33 +1,34 @@
 from functions import *
 
 if __name__ == "__main__":
+     
      G = MakeGraph()
      
-     path = ShortestPath(G, G.nodes[0], G.nodes[3]) 
+     path = ShortestPath(G, "192.168.242.10", "192.168.10.10") 
 
      print("----Graph----")
      PrintGraph(G)
      print()
 
      print("----Shortest Path----")
-     print("From: " + G.nodes[0].ip + " to " + G.nodes[3].ip)
+     print("From: " + "192.168.242.10" + " to " + "192.168.10.10")
      print(path[0])
      print("Length:", path[1]) 
 
      print()
      print("----New paths after update----")
-     UpdateEdge(G, G.nodes[0], G.nodes[3], 1)
-     path = ShortestPath(G, G.nodes[0], G.nodes[3]) 
+     UpdateEdge(G, "192.168.242.10", "192.168.10.10", 1)
+     path = ShortestPath(G, "192.168.242.10", "192.168.10.10") 
      print("----Shortest Path----")
-     print("From: " + G.nodes[0].ip + " to " + G.nodes[3].ip)
+     print("From: " + "192.168.242.10" + " to " + "192.168.10.10")
      print(path[0])
      print("Length:", path[1]) 
 
-     UpdateEdge(G, G.nodes[-3], G.nodes[-5], 1)
+     UpdateEdge(G, "192.168.10.11", "192.168.242.48", 1)
 
-     path = ShortestPath(G, G.nodes[0], G.nodes[-1]) 
+     path = ShortestPath(G, "192.168.242.10", "192.168.242.84") 
      print("----Shortest Path----")
-     print("From: " + G.nodes[0].ip + " to " + G.nodes[-1].ip)
+     print("From: " + "192.168.242.10" + " to " + "192.168.242.84")
      print(path[0])
      print("Length:", path[1]) 
 
