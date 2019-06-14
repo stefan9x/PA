@@ -1,144 +1,125 @@
 import math
 import random
-from graph_vertex import *
+from graph_cls import *
 
 def make_graph():
 
-    a = Vertex(n = "a")
-    b = Vertex(n = "b")
-    c = Vertex(n = "c")
-    d = Vertex(n = "d")
-    e = Vertex(n = "e")
-    f = Vertex(n = "f")
-    g = Vertex(n = "g")
+    G = Graph()
+    
+    G.add_node("a", math.inf)
+    G.add_node("b", math.inf)
+    G.add_node("c", math.inf)
+    G.add_node("d", math.inf)
+    G.add_node("e", math.inf)
+    G.add_node("f", math.inf)
+    G.add_node("g", math.inf)
 
-    V = [a, b, c, d, e, f, g]
+    G.add_edge("a", "b", 8)
+    G.add_edge("a", "c", 6)
+    G.add_edge("b", "d", 10)
+    G.add_edge("c", "d", 15)
+    G.add_edge("c", "e", 9)
+    G.add_edge("d", "e", 14)
+    G.add_edge("d", "f", 4)
+    G.add_edge("e", "f", 13)
+    G.add_edge("e", "g", 17)
+    G.add_edge("f", "g", 7)
 
-    E = []
+    return G
 
-    E.append(Edge(a, b, 8))
-    E.append(Edge(a, c, 6))
-    E.append(Edge(b, d, 10))
-    E.append(Edge(c, d, 15))
-    E.append(Edge(c, e, 9))
-    E.append(Edge(d, e, 14))
-    E.append(Edge(d, f, 4))
-    E.append(Edge(e, f, 13))
-    E.append(Edge(e, g, 17))
-    E.append(Edge(f, g, 7))
-
-    return [V, E]
-
-def get_weight(E, s, d):
-    for e in E:
-        if e.source == s and e.destination == d:
-            return e.weight
-
-def print_path(s, d):
-    if d == s:
-        print(s, end = " ")
-    elif d.parent == None:
-        print("No path from " + str(s.name) + " to " + str(d.name) + " exist.", end = " ")
+def print_path(G, src, dst):
+    if dst == src:
+        print(src, end = " ")
+    elif dst.parent == None:
+        print("No path from " + src + " to " + dst + " exist.", end = " ")
     else:
-        print_path(s, d.parent)
-        print(d, end = " ")
+        print_path(G, src, G.parent[dst])
+        print(dst, end = " ")
 
-def print_all_paths(G, s):
-    for v in G[0]:
-        print("Shortest path from " + s.name + " to " + v.name + ":", end = " ")
-        print_path(s, v)
+def print_all_paths(G, src):
+    for node in G.nodes:
+        print("Shortest path from " + src + " to " + node + ":", end = " ")
+        print_path(G, src, node)
         print()
 
 def print_graph(G):
-    print()
-    for v in G[0]:
-        for e in G[1]:
-            if v == e.source:
-                print(e.source, end = " -> ")
-                print(e.destination, end = " : ")
-                print(e.weight)
-        print()
+    for node in G.nodes:
+        for dst in G.connections[node]:
+            print(node, end = " -> ")
+            print(dst, end = " : ")
+            print(G.weights[(node, dst)])
 
-def find_path(s, d, path_list):
-    if d == s:
-        path_list.append(s)
-    elif d.parent == None:
+def find_path(G, src, dst, path_list):
+    if dst == src:
+        path_list.append(src)
+    elif G.parent[dst] == None:
         return None
     else:
-        find_path(s, d.parent, path_list)
-        path_list.append(d)
+        find_path(G, src, G.parent[dst], path_list)
+        path_list.append(dst)
 
-def init_single_src(V, s):
-    for v in V:
-        v.data = math.inf
-        v.parent = None
+def init_single_src(G, src):
+    for node in G.nodes:
+        G.nodes[node] = math.inf
+        G.add_parent(node, None)
 
-    s.data = 0
+    G.nodes[src] = 0
 
-def relax(E, u, v):
-    w = get_weight(E, u, v)
-    if v.data > u.data + w:
-        v.data = u.data + w
-        v.parent = u
+def relax(G, src, dst):
+    w = G.weights[(src, dst)]
+    if G.nodes[dst] > G.nodes[src] + w:
+        G.nodes[dst] = G.nodes[src] + w
+        G.add_parent(dst, src)
 
-def bellman_ford(G, s):
-    init_single_src(G[0], s)
+def bellman_ford(G, src):
+    init_single_src(G, src)
 
-    for i in range(len(G[0])):
-        for e in G[1]:
-            relax(G[1], e.source, e.destination)
+    for node in G.nodes:
+        for dst in G.connections[node]:
+            relax(G, node, dst)
 
-    for e in G[1]:
-        if e.destination.data > e.source.data + get_weight(G[1], e.source, e.destination):
-            return False
+    for node in G.nodes:
+        for dst in G.connections[node]:
+            if G.nodes[dst] > G.nodes[node] + G.weights[(node, dst)]:
+                return False
 
     return True
 
 def get_in_degrees(G):
-    L = []
+    L = {}
 
-    for v in G[0]:
+    for node in G.nodes:
         deg = 0
+        for node2 in G.nodes:
+            for dst in G.connections[node2]:
+                if dst == node:
+                    deg += 1
 
-        for e in G[1]:
-            if e.destination == v:
-                deg += 1
-
-        L.append([v, deg])
+        L[node] = deg
 
     return L
 
 def get_out_degrees(G):
-    L = []
+    L = {}
 
-    for v in G[0]:
-        deg = 0
-
-        for e in G[1]:
-            if e.source == v:
-                deg += 1
-
-        L.append([v, deg])
+    for node in G.nodes:
+        L[node] = len(G.connections[node])
 
     return L
 
-def shortest_path(G, s, d):
+def shortest_path(G, src, dst):
     path_list = []
     
-    bellman_ford(G, s)
-    find_path(s, d, path_list)
+    bellman_ford(G, src)
+    find_path(G, src, dst, path_list)
 
     #1 return list of vertexes in path
     #2 return total path length, stored in last vertex in path_list
-    return [path_list, path_list[-1].data]
+    return [path_list, G.nodes[path_list[-1]]]
 
-def update_edge(G, s, d, w):
-    found = False
+def update_edge(G, src, dst, w):
     
-    for e in G[1]:
-        if e.source == s and e.destination == d:
-            e.weight = w
-            found = True
-
-    if not found:
-        G[1].append(Edge(s, d, w))
+    if dst not in G.connections[src]:
+        G.add_edge(src, dst, w)
+    else:
+        G.weights[(src, dst)] = w
