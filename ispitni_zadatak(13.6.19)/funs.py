@@ -3,43 +3,42 @@ from cls import *
 def MakeGraph():
 
 	G = Graph()
-	G.nodes["a"] = Node("a")
-	G.nodes["b"] = Node("b")
-	G.nodes["c"] = Node("c")
-	G.nodes["d"] = Node("d")
-	G.nodes["e"] = Node("e")
-	G.nodes["f"] = Node("f")
+	G.addNode("a")
+	G.addNode("b")
+	G.addNode("c")
+	G.addNode("d")
+	G.addNode("e")
+	G.addNode("f")
 
-	G.nodes["a"].connection.append("b")
-	G.nodes["a"].connection.append("d")
+	G.addEdge("a", "b")
+	G.addEdge("a", "d")
 
-	G.nodes["b"].connection.append("e")
+	G.addEdge("b", "e")
 
-	G.nodes["c"].connection.append("e")
-	G.nodes["c"].connection.append("f")
+	G.addEdge("c", "e")
+	G.addEdge("c", "f")
 
-	G.nodes["d"].connection.append("b")
+	G.addEdge("d", "b")
 
-	G.nodes["e"].connection.append("d")
+	G.addEdge("e", "d")
 
-	G.nodes["f"].connection.append("f")
+	G.addEdge("f", "f")
 
 	return G
 
 def PrintGraph(G):
 	
-	for n in G.nodes:
-		print(G.nodes[n].name + ":", end = " ")
-		for c in G.nodes[n].connection:
-			print(c, end = "")
+	for node in G.nodes:
+		print(node + ":", end = " ")
+		for conn in G.connections[node]:
+			print(conn, end = "")
 		print()
 
 def PrintTimes(G):
 
-	for n in G.nodes:
-		print(n + ":" + str(G.nodes[n].ftime) + "/" + str(G.nodes[n].ltime))
+	for node in G.nodes:
+		print(node + ":" + str(G.ftime[node]) + "/" + str(G.ltime[node]))
 	
-
 def ApplyStrongConnectedComponents():
 
 	G = MakeGraph()
@@ -65,72 +64,70 @@ def ApplyStrongConnectedComponents():
 def TransposeGraph(G):
 	nG = Graph()
 
-	for n in G.nodes:
-		nG.nodes[n] = Node(n)
-
-	for n in G.nodes:
-		for c in G.nodes[n].connection:
-			nG.nodes[c].connection.append(n)
+	for node in G.nodes:
+		nG.addNode(node)
+		for conn in G.connections[node]:
+			nG.addEdge(conn, node)
 
 	return nG
 
 def ApplyDFS(G):
 	global time
 	SCC = []
-	for n in G.nodes:
-		G.nodes[n].color = "WHITE"
-		G.nodes[n].parent = None
+	for node in G.nodes:
+		G.color[node] = Color.WHITE
+		G.addParent(node, None)
 
 	time = 0
 
-	for n in G.nodes:
-		if G.nodes[n].color == "WHITE":
-			DFSVisit(G, n, SCC)
+	for node in G.nodes:
+		if G.color[node] == Color.WHITE:
+			DFSVisit(G, node, SCC)
 
 def DFSVisit(G, u, SCC):
 	global time
 	time = time + 1
-	G.nodes[u].ftime = time
-	G.nodes[u].color = "GRAY"
+	G.ftime[u] = time
+	G.color[u] = Color.GRAY
 	SCC.append(u)
 	
-	for c in G.nodes[u].connection:
-		if G.nodes[c].color == "WHITE":
-			G.nodes[c].parent == u
-			DFSVisit(G, c, SCC)
+	for conn in G.connections[u]:
+		if G.color[conn] == Color.WHITE:
+			G.addParent(conn, u)
+			DFSVisit(G, conn, SCC)
 
-	G.nodes[u].color = "BLACK"
+	G.color[u] = Color.BLACK
 	time = time + 1
-	G.nodes[u].ltime = time
+	G.ltime[u] = time
 
 def ApplyDFSInOrder(G, tG):
 	
 	L = []
 	sortedG = []
 
-	for n in G.nodes:
-		L.append(G.nodes[n].ltime)
+	for node in G.nodes:
+		L.append(G.ltime[node])
 
 	L.sort(reverse = True)
 
 	for t in L:
-		for n in G.nodes:
-			if G.nodes[n].ltime == t:
-				sortedG.append(n)
+		for node in G.nodes:
+			if G.ltime[node] == t:
+				sortedG.append(node)
 
 	#DFS
 	global time
 	SCC = []
 
-	for n in sortedG:
-		tG.nodes[n].color = "WHITE"
-		tG.nodes[n].parent = None
+	for node in sortedG:
+		tG.color[node] = Color.WHITE
+		tG.addParent(node, None)
 
 	time = 0
 
-	for n in sortedG:
-		if tG.nodes[n].color == "WHITE":
-			DFSVisit(tG, n, SCC)
+	for node in sortedG:
+		if tG.color[node] == Color.WHITE:
+			DFSVisit(tG, node, SCC)
 			SCC.append(";")
 	
 	print("Sorted first graph:", end = " ")

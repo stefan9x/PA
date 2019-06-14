@@ -1,14 +1,25 @@
 from collections import defaultdict
+from enum import Enum
 
-class Node():
-	def __init__(self, n):
-		self.name = n
-		self.color = None
-		self.connection = []
-		self.parent = None
-		self.ftime = None
-		self.ltime = None
-
-class Graph():
+class Graph:
 	def __init__(self):
-		self.nodes = defaultdict(Node)
+		self.nodes = []
+		self.connections = defaultdict(list)
+		self.parent = {}
+		self.color = {}
+		self.ftime = {}
+		self.ltime = {}
+        
+	def addNode(self, name):
+		self.nodes.append(name)
+
+	def addEdge(self, src, dst):
+		self.connections[src].append(dst)
+
+	def addParent(self, node, parent):
+		self.parent[node] = parent
+
+class Color:
+	BLACK = 0
+	GRAY = 127
+	WHITE = 255
